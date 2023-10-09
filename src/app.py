@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_daq as daq
 from flask import Flask, request, make_response
 
@@ -91,12 +91,13 @@ app.layout = html.Div([
 		dcc.Input(id='exer6', type='text', placeholder='Quantidade de exercícios feitos',
 		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
     ], style={'textAlign': 'right', 'display': 'inline-block', 'vertical-align': 'middle', 'width': '30%'}),
-    html.Br(),html.Br(),
+    html.Br(),html.Br(), dcc.Store(id='cookie-store', storage_type='memory'),
     
     
 ])
 
 @app.callback(
+	Output('cookie-store', 'data'),
 	Output('message-box', 'children'),
     Output('thermometer', 'value'),
     Output('thermometer', 'color'),
@@ -107,32 +108,44 @@ app.layout = html.Div([
     Input('exer3', 'value'),
     Input('exer4', 'value'),
     Input('exer5', 'value'),
-    Input('exer6', 'value')
+    Input('exer6', 'value'),
+    State('cookie-store', 'data')
 )
-def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
-	assun_cookie = get_cookie('assun_cookie')
-	exer1_cookie = get_cookie('exer1_cookie')
-	exer2_cookie = get_cookie('exer2_cookie')
-	exer3_cookie = get_cookie('exer3_cookie')
-	exer4_cookie = get_cookie('exer4_cookie')	
-	exer5_cookie = get_cookie('exer5_cookie')
-	exer6_cookie = get_cookie('exer6_cookie')
+def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6, cookie_data):
+	if not cookie_data:
+		cookie_data = {
+			'assun_cookie': None,
+			'exer1_cookie': None,
+			'exer2_cookie': None,
+			'exer3_cookie': None,
+			'exer4_cookie': None,
+			'exer5_cookie': None,
+			'exer6_cookie': None}
     
-	if assun_cookie is None:
-		assun_cookie = assun
-	if exer1_cookie is None:
-		exer1_cookie = exer1
-	if exer2_cookie is None:
-		exer2_cookie = exer2
-	if exer3_cookie is None:
-		exer3_cookie = exer3
-	if exer4_cookie is None:
-		exer4_cookie = exer4
-	if exer5_cookie is None:
-		exer5_cookie = exer5
-	if exer6_cookie is None:
-		exer6_cookie = exer6
-     
+	assun_cookie = cookie_data['assun_cookie']
+	exer1_cookie = cookie_data['exer1_cookie']
+	exer2_cookie = cookie_data['exer2_cookie']
+	exer3_cookie = cookie_data['exer3_cookie']
+	exer4_cookie = cookie_data['exer4_cookie']
+	exer5_cookie = cookie_data['exer5_cookie']
+	exer6_cookie = cookie_data['exer6_cookie']
+    
+	assun_cookie = assun
+	if exer1: exer1_cookie = exer1
+	if exer2: exer2_cookie = exer2
+	if exer3: exer3_cookie = exer3
+	if exer4: exer4_cookie = exer4
+	if exer5: exer5_cookie = exer5
+	if exer6: exer6_cookie = exer6
+	
+	cookie_data['assun_cookie'] = assun_cookie
+	cookie_data['exer1_cookie'] = exer1_cookie
+	cookie_data['exer2_cookie'] = exer2_cookie
+	cookie_data['exer3_cookie'] = exer3_cookie
+	cookie_data['exer4_cookie'] = exer4_cookie
+	cookie_data['exer5_cookie'] = exer5_cookie
+	cookie_data['exer6_cookie'] = exer6_cookie
+    
 	if not exer1_cookie: exer1_cookie=0 
 	if not exer2_cookie: exer2_cookie=0 
 	if not exer3_cookie: exer3_cookie=0 
@@ -140,16 +153,7 @@ def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
 	if not exer5_cookie: exer5_cookie=0 
 	if not exer6_cookie: exer6_cookie=0 
 	avg_temp = (len(assun_cookie)/7)*50 + (int(exer1_cookie)/exerc[0])*(100/12)+(int(exer2_cookie)/exerc[1])*(100/12)+(int(exer3_cookie)/exerc[2])*(100/12)+(int(exer4_cookie)/exerc[3])*(100/12)+(int(exer5_cookie)/exerc[4])*(100/12)+(int(exer6_cookie)/exerc[5])*(100/12)
-	
-	print(assun)
-	
-	#if len(assun) != 0: set_cookie('assun_cookie', assun)
-	if exer1 is not None: set_cookie('exer1_cookie', exer1)
-	if exer2 is not None: set_cookie('exer2_cookie', exer2)
-	if exer3 is not None: set_cookie('exer3_cookie', exer3)
-	if exer4 is not None: set_cookie('exer4_cookie', exer4)
-	if exer5 is not None: set_cookie('exer5_cookie', exer5)
-	if exer6 is not None: set_cookie('exer6_cookie', exer6)
+
 	
 	thermometer_value = avg_temp
 	img_style = {
@@ -160,7 +164,7 @@ def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
     }
 	color = f'rgb({255 - int(2.55 * thermometer_value)}, {int(2.55 * thermometer_value)}, 0)'
 	message = generate_message(avg_temp)
-	return html.H3(message),thermometer_value, color, img_style
+	return cookie_data, html.H3(message),thermometer_value, color, img_style
 
 if __name__ == '__main__':
     app.run_server(debug=True)
