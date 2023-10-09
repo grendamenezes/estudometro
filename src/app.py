@@ -141,13 +141,15 @@ def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
 	if not exer6_cookie: exer6_cookie=0 
 	avg_temp = (len(assun_cookie)/7)*50 + (int(exer1_cookie)/exerc[0])*(100/12)+(int(exer2_cookie)/exerc[1])*(100/12)+(int(exer3_cookie)/exerc[2])*(100/12)+(int(exer4_cookie)/exerc[3])*(100/12)+(int(exer5_cookie)/exerc[4])*(100/12)+(int(exer6_cookie)/exerc[5])*(100/12)
 	
-	set_cookie('assun_cookie', assun)
-	set_cookie('exer1_cookie', exer1)
-	set_cookie('exer2_cookie', exer2)
-	set_cookie('exer3_cookie', exer3)
-	set_cookie('exer4_cookie', exer4)
-	set_cookie('exer5_cookie', exer5)
-	set_cookie('exer6_cookie', exer6)
+	print(assun)
+	
+	#if len(assun) != 0: set_cookie('assun_cookie', assun)
+	if exer1 is not None: set_cookie('exer1_cookie', exer1)
+	if exer2 is not None: set_cookie('exer2_cookie', exer2)
+	if exer3 is not None: set_cookie('exer3_cookie', exer3)
+	if exer4 is not None: set_cookie('exer4_cookie', exer4)
+	if exer5 is not None: set_cookie('exer5_cookie', exer5)
+	if exer6 is not None: set_cookie('exer6_cookie', exer6)
 	
 	thermometer_value = avg_temp
 	img_style = {
