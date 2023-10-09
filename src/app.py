@@ -1,9 +1,8 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_daq as daq
-from flask import Flask, request, make_response
 
 exerc = [4,1,15,3,5,1]
 
@@ -21,18 +20,6 @@ def generate_message(avg_temp):
 
 app = dash.Dash(__name__)
 server=app.server
-
-# Inicialize o aplicativo Flask
-flask_app = Flask(__name__)
-
-def set_cookie(name, value):
-    resp = make_response()
-    resp.set_cookie(name, value)
-    return resp
-
-# Função para obter o valor de um cookie
-def get_cookie(name):
-    return request.cookies.get(name)
 
 app.layout = html.Div([
     html.H1("Dani macetando velho calvo",style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
@@ -68,36 +55,35 @@ app.layout = html.Div([
                 {'label': '18.7: Problemas difusivos com transformações de similaridade', 'value': 'Assunto7'}
             ],
             value=[],  # Inicialmente nenhum valor está selecionado
-            style={'textAlign': 'left','flex-direction': 'column', 'display': 'flex'}
+            style={'textAlign': 'left','flex-direction': 'column', 'display': 'flex'}, persistence=True
         ),
     ], style={'textAlign': 'left', 'display': 'inline-block', 'vertical-align': 'middle', 'width': '50%'}),
     html.Div([html.H2("Exercícios",style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
 		html.H4("Cap. 18.1: 4 exercícios",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer1', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
 		html.H4("Cap. 18.2: 1 exercício",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer2', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
 		html.H4("Cap. 18.3: 15 exercícios",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer3', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
 		html.H4("Cap. 18.4: 3 exercícios",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer4', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
 		html.H4("Cap. 18.5: 5 exercícios",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer5', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
 		html.H4("Cap. 18.7: 1 exercício",style={'display': 'flex', 'align-items': 'left', 'justify-content': 'left'}),
 		dcc.Input(id='exer6', type='text', placeholder='Quantidade de exercícios feitos',
-		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}),
+		          style={'width': '200px','textAlign': 'center','flex-direction': 'column', 'display': 'flex'}, persistence=True),
     ], style={'textAlign': 'right', 'display': 'inline-block', 'vertical-align': 'middle', 'width': '30%'}),
-    html.Br(),html.Br(), dcc.Store(id='cookie-store', storage_type='memory'),
+    html.Br(),html.Br(),
     
     
 ])
 
 @app.callback(
-	Output('cookie-store', 'data'),
 	Output('message-box', 'children'),
     Output('thermometer', 'value'),
     Output('thermometer', 'color'),
@@ -108,53 +94,16 @@ app.layout = html.Div([
     Input('exer3', 'value'),
     Input('exer4', 'value'),
     Input('exer5', 'value'),
-    Input('exer6', 'value'),
-    State('cookie-store', 'data')
+    Input('exer6', 'value')
 )
-def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6, cookie_data):
-	if not cookie_data:
-		cookie_data = {
-			'assun_cookie': None,
-			'exer1_cookie': None,
-			'exer2_cookie': None,
-			'exer3_cookie': None,
-			'exer4_cookie': None,
-			'exer5_cookie': None,
-			'exer6_cookie': None}
-    
-	assun_cookie = cookie_data['assun_cookie']
-	exer1_cookie = cookie_data['exer1_cookie']
-	exer2_cookie = cookie_data['exer2_cookie']
-	exer3_cookie = cookie_data['exer3_cookie']
-	exer4_cookie = cookie_data['exer4_cookie']
-	exer5_cookie = cookie_data['exer5_cookie']
-	exer6_cookie = cookie_data['exer6_cookie']
-    
-	assun_cookie = assun
-	if exer1: exer1_cookie = exer1
-	if exer2: exer2_cookie = exer2
-	if exer3: exer3_cookie = exer3
-	if exer4: exer4_cookie = exer4
-	if exer5: exer5_cookie = exer5
-	if exer6: exer6_cookie = exer6
-	
-	cookie_data['assun_cookie'] = assun_cookie
-	cookie_data['exer1_cookie'] = exer1_cookie
-	cookie_data['exer2_cookie'] = exer2_cookie
-	cookie_data['exer3_cookie'] = exer3_cookie
-	cookie_data['exer4_cookie'] = exer4_cookie
-	cookie_data['exer5_cookie'] = exer5_cookie
-	cookie_data['exer6_cookie'] = exer6_cookie
-    
-	if not exer1_cookie: exer1_cookie=0 
-	if not exer2_cookie: exer2_cookie=0 
-	if not exer3_cookie: exer3_cookie=0 
-	if not exer4_cookie: exer4_cookie=0 
-	if not exer5_cookie: exer5_cookie=0 
-	if not exer6_cookie: exer6_cookie=0 
-	avg_temp = (len(assun_cookie)/7)*50 + (int(exer1_cookie)/exerc[0])*(100/12)+(int(exer2_cookie)/exerc[1])*(100/12)+(int(exer3_cookie)/exerc[2])*(100/12)+(int(exer4_cookie)/exerc[3])*(100/12)+(int(exer5_cookie)/exerc[4])*(100/12)+(int(exer6_cookie)/exerc[5])*(100/12)
-
-	
+def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
+	if not exer1: exer1=0 
+	if not exer2: exer2=0 
+	if not exer3: exer3=0 
+	if not exer4: exer4=0 
+	if not exer5: exer5=0 
+	if not exer6: exer6=0 
+	avg_temp = (len(assun)/7)*50 + (int(exer1)/exerc[0])*(100/12)+(int(exer2)/exerc[1])*(100/12)+(int(exer3)/exerc[2])*(100/12)+(int(exer4)/exerc[3])*(100/12)+(int(exer5)/exerc[4])*(100/12)+(int(exer6)/exerc[5])*(100/12)
 	thermometer_value = avg_temp
 	img_style = {
         'height': '150px',
@@ -164,7 +113,7 @@ def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6, cookie_data):
     }
 	color = f'rgb({255 - int(2.55 * thermometer_value)}, {int(2.55 * thermometer_value)}, 0)'
 	message = generate_message(avg_temp)
-	return cookie_data, html.H3(message),thermometer_value, color, img_style
+	return html.H3(message),thermometer_value, color, img_style
 
 if __name__ == '__main__':
     app.run_server(debug=True)
