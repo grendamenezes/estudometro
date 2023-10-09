@@ -30,7 +30,7 @@ app.layout = html.Div([
         # Termômetro graduado
         daq.Thermometer(
             id='thermometer',
-            value=50,
+            value=0,
             min=0,
             max=100,
             scale={'start': 0, 'interval': 10, 'labelInterval': 10},
