@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_daq as daq
+import dash_cookie
 
 exerc = [4,1,15,3,5,1]
 
@@ -20,6 +21,10 @@ def generate_message(avg_temp):
 
 app = dash.Dash(__name__)
 server=app.server
+
+# Configurar a extensão de cookies
+app.config.suppress_callback_exceptions = True
+cookie = dash_cookie.DashCookie(app)
 
 app.layout = html.Div([
     html.H1("Dani macetando velho calvo",style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
@@ -97,13 +102,45 @@ app.layout = html.Div([
     Input('exer6', 'value')
 )
 def update_thermometer(assun,exer1,exer2,exer3,exer4,exer5,exer6):
-	if not exer1: exer1=0 
-	if not exer2: exer2=0 
-	if not exer3: exer3=0 
-	if not exer4: exer4=0 
-	if not exer5: exer5=0 
-	if not exer6: exer6=0 
-	avg_temp = (len(assun)/7)*50 + (int(exer1)/exerc[0])*(100/12)+(int(exer2)/exerc[1])*(100/12)+(int(exer3)/exerc[2])*(100/12)+(int(exer4)/exerc[3])*(100/12)+(int(exer5)/exerc[4])*(100/12)+(int(exer6)/exerc[5])*(100/12)
+	assun_cookie = cookie.get('assun_cookie')
+	exer1_cookie = cookie.get('exer1_cookie')
+	exer2_cookie = cookie.get('exer2_cookie')
+	exer3_cookie = cookie.get('exer3_cookie')
+	exer4_cookie = cookie.get('exer4_cookie')	
+	exer5_cookie = cookie.get('exer5_cookie')
+	exer6_cookie = cookie.get('exer6_cookie')
+    
+	if assun_cookie is None:
+		assun_cookie = assun
+	if exer1_cookie is None:
+		exer1_cookie = exer1
+	if exer2_cookie is None:
+		exer2_cookie = exer2
+	if exer3_cookie is None:
+		exer3_cookie = exer3
+	if exer4_cookie is None:
+		exer4_cookie = exer4
+	if exer5_cookie is None:
+		exer5_cookie = exer5
+	if exer6_cookie is None:
+		exer6_cookie = exer6
+     
+	if not exer1_cookie: exer1_cookie=0 
+	if not exer2_cookie: exer2_cookie=0 
+	if not exer3_cookie: exer3_cookie=0 
+	if not exer4_cookie: exer4_cookie=0 
+	if not exer5_cookie: exer5_cookie=0 
+	if not exer6_cookie: exer6_cookie=0 
+	avg_temp = (len(assun_cookie)/7)*50 + (int(exer1_cookie)/exerc[0])*(100/12)+(int(exer2_cookie)/exerc[1])*(100/12)+(int(exer3_cookie)/exerc[2])*(100/12)+(int(exer4_cookie)/exerc[3])*(100/12)+(int(exer5_cookie)/exerc[4])*(100/12)+(int(exer6_cookie)/exerc[5])*(100/12)
+	
+	cookie.set('assun_cookie', assun)
+	cookie.set('exer1_cookie', exer1)
+	cookie.set('exer2_cookie', exer2)
+	cookie.set('exer3_cookie', exer3)
+	cookie.set('exer4_cookie', exer4)
+	cookie.set('exer5_cookie', exer5)
+	cookie.set('exer6_cookie', exer6)
+	
 	thermometer_value = avg_temp
 	img_style = {
         'height': '150px',
