@@ -36,7 +36,7 @@ app.layout = html.Div([
             label='Estudômetro',
         ),
         
-        html.Img(id='sun-img', src='https://raw.githubusercontent.com/Grenda07/estudometro/main/dani_docinho2.png', style={'height': '100px', 'width': '100px', 'margin-left': '10px'}),
+        html.Img(id='sun-img', src='https://raw.githubusercontent.com/grendamenezes/estudometro/main/dani_docinho2.png', style={'height': '100px', 'width': '100px', 'margin-left': '10px'}),
     ], style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     
     html.Br(), html.Br(), html.Br(), html.Br(),
